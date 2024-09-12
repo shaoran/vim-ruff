@@ -1,0 +1,9 @@
+*.log
+*.pyc
+__pycache__
+*.swp
+*.swo
+*.orig
+*.egg-info
+*.egg-info
+tags
