@@ -16,5 +16,8 @@ endif
 
 let g:vimruff_loaded = "loaded"
 
+function RuffComplete(ArgLead, CmdLine, CursorPos)
+    return call vimruff#RuffComplete(a:ArgLead, a:CmdLine, a:CursorPos)
+endfunction
 
-command! -nargs=* Ruff call vimruff#Ruf(<f-args>)
+command! -nargs=* -complete=customlist,vimruff#RuffComplete Ruff call vimruff#Ruf(<f-args>)
