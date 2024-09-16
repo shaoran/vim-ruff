@@ -17,4 +17,4 @@ endif
 let g:vimruff_loaded = "loaded"
 
 
-command! Ruff :call vimruff#Ruf()
+command! -nargs=* Ruff call vimruff#Ruf(<f-args>)

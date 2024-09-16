@@ -10,7 +10,6 @@ def ruff():
 
 PYTHON3
 
-
-function vimruff#Ruf()
+function vimruff#Ruf(...)
     :py3 ruff()
 endfunction
