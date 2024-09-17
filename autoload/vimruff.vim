@@ -6,6 +6,9 @@
 python3 << PYTHON3
 
 import shlex
+import shutil
+import sys
+import os
 
 def match_all_startswith(options, candidate):
     if candidate == "":
@@ -48,6 +51,22 @@ def get_val(name):
     return vim.eval(name)
 
 def ruff(*args):
+    try:
+        bin_path = get_val("g:vimruff_ruff_path")
+
+        if not os.path.exists(bin_path):
+            print_error(f"The path {bin_path!r} does not exist")
+            return
+
+        if not os.access(bin_path, os.X_OK):
+            print_error(f"The path {bin_path!r} is not an executable")
+            return
+    except ValueError:
+        bin_path = shutil.which("ruff")
+        if bin_path is None:
+            print_error("ruff is not found in the PATH environment variable.\nEither update your PATH or set g:vimruff_ruff_path")
+            return
+
     print("This is ruff", args)
 
 PYTHON3
