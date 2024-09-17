@@ -35,6 +35,18 @@ def ruff_cmdline_complete(arg_lead, cmd_line, cursor_pos):
     # second argument is full, nothing left to complete
     return []
 
+
+def print_error(msg):
+    msg = shlex.quote(msg)
+    vim.command("echohl ErrorMsg")
+    vim.command(f"echo {msg}")
+    vim.command("echohl Null")
+
+def get_val(name):
+    if not int(vim.eval(f"exists(\"{name}\")")):
+        raise ValueError("not found")
+    return vim.eval(name)
+
 def ruff():
     print("This is ruff")
 
