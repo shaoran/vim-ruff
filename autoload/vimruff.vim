@@ -47,13 +47,13 @@ def get_val(name):
         raise ValueError("not found")
     return vim.eval(name)
 
-def ruff():
-    print("This is ruff")
+def ruff(*args):
+    print("This is ruff", args)
 
 PYTHON3
 
 function vimruff#Ruf(...)
-    :py3 ruff()
+    :py3 ruff(*vim.eval("a:000"))
 endfunction
 
 
