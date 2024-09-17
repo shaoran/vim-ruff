@@ -16,6 +16,15 @@ endif
 
 let g:vimruff_loaded = "loaded"
 
+" default values for global variables
+if !exists("g:vimruff_default")
+    let g:vimruff_default = "format"
+endif
+
+if !exists("g:vimruff_check_select")
+    let g:vimruff_check_select = ""
+endif
+
 function RuffComplete(ArgLead, CmdLine, CursorPos)
     return call vimruff#RuffComplete(a:ArgLead, a:CmdLine, a:CursorPos)
 endfunction
