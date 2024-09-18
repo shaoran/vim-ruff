@@ -52,6 +52,20 @@ def get_val(name):
         raise ValueError("not found")
     return vim.eval(name)
 
+def set_val(name, val):
+    if isinstance(val, str):
+        vval = shlex.quote(val)
+        if val == vval:
+            val = f"'{val}'"
+        else:
+            val = vval
+    elif isinstance(val, bool):
+        if val == True:
+            val = "v:true"
+        else:
+            val = "v:false"
+    vim.command(f"let {name}={val}")
+
 def ruff(*args):
     try:
         bin_path = get_val("g:vimruff_ruff_path")
