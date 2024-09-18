@@ -25,6 +25,10 @@ if !exists("g:vimruff_check_select")
     let g:vimruff_check_select = ""
 endif
 
+if !exists("g:vimruff_eval_pyproject_toml")
+    let g:vimruff_eval_pyproject_toml = v:true
+endif
+
 function RuffComplete(ArgLead, CmdLine, CursorPos)
     return call vimruff#RuffComplete(a:ArgLead, a:CmdLine, a:CursorPos)
 endfunction
