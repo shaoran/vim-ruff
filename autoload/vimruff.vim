@@ -153,6 +153,16 @@ def ruff(*args):
             print_error("ruff is not found in the PATH environment variable.\nEither update your PATH or set g:vimruff_ruff_path")
             return
 
+    check_pyproject = get_val("g:vimruff_eval_pyproject_toml")
+    if check_pyproject:
+        try:
+            get_val("b:vimruff_project_parsed")
+        except ValueError:
+            parse_pyproject_toml()
+
+    # if pyproject.toml has been parsed and contained
+    # the variables, they have been set via b:<var>
+
     print("This is ruff", args)
 
 PYTHON3
