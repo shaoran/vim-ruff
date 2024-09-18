@@ -148,7 +148,8 @@ def parse_pyproject_toml():
 
     set_val("b:vimruff_project_parsed", True)
 
-def ruff(*args):
+def ruff(range_enabled, line_spec, *args):
+    firstline, lastline = line_spec
     try:
         bin_path = get_val("g:vimruff_ruff_path")
 
@@ -179,8 +180,9 @@ def ruff(*args):
 
 PYTHON3
 
-function vimruff#Ruf(...)
-    :py3 ruff(*vim.eval("a:000"))
+
+function vimruff#Ruf(range, ...) range
+    :py3 ruff(vim.eval("a:range"), (vim.eval("a:firstline"), vim.eval("a:lastline")), *vim.eval("a:000"))
 endfunction
 
 
