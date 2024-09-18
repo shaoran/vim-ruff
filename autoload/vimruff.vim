@@ -64,6 +64,20 @@ def set_val(name, val):
             val = "v:false"
     vim.command(f"let {name}={val}")
 
+def get_config_val(name):
+    """
+    The difference of this functin to get_val is that this
+    function checks first for the buffer variables. The variable
+    name should not have a prefix like g: or b:
+    """
+
+    try:
+        return get_val(f"b:{name}")
+    except ValueError:
+        pass
+
+    return get_val(f"g:{name}")
+
 
 def find_pyproject_toml(path, max_rec=1024):
     fn_dir = path
