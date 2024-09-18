@@ -29,7 +29,7 @@ def ruff_cmdline_complete(arg_lead, cmd_line, cursor_pos):
     assert(len(opts) > 0)
     assert(opts[0] == "Ruff")
 
-    pos1_vals = ["check", "format", "info"]
+    pos1_vals = ["check", "format", "info", "clear"]
 
     if len(opts) == 1:
         return pos1_vals
