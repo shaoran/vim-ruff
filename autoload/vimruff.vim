@@ -12,6 +12,8 @@ import os
 
 from pathlib import Path
 
+RUFF_COMMANDS = ["check", "format", "info", "clear"]
+
 def match_all_startswith(options, candidate):
     if candidate == "":
         return []
@@ -29,7 +31,7 @@ def ruff_cmdline_complete(arg_lead, cmd_line, cursor_pos):
     assert(len(opts) > 0)
     assert(opts[0] == "Ruff")
 
-    pos1_vals = ["check", "format", "info", "clear"]
+    pos1_vals = RUFF_COMMANDS
 
     if len(opts) == 1:
         return pos1_vals
