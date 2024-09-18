@@ -10,6 +10,8 @@ import shutil
 import sys
 import os
 
+from pathlib import Path
+
 def match_all_startswith(options, candidate):
     if candidate == "":
         return []
@@ -39,9 +41,9 @@ def ruff_cmdline_complete(arg_lead, cmd_line, cursor_pos):
     return []
 
 
-def print_error(msg):
+def print_error(msg, hl="ErrorMsg"):
     msg = shlex.quote(msg)
-    vim.command("echohl ErrorMsg")
+    vim.command(f"echohl {hl}")
     vim.command(f"echo {msg}")
     vim.command("echohl Null")
 
