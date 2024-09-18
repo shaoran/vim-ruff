@@ -66,6 +66,76 @@ def set_val(name, val):
             val = "v:false"
     vim.command(f"let {name}={val}")
 
+
+def find_pyproject_toml(path, max_rec=1024):
+    fn_dir = path
+    while True:
+        max_rec -= 1
+        if max_rec == 0:
+            raise KeyError("pyproject.toml not found")
+
+        fn_dir = os.path.dirname(fn_dir)
+
+        fn = os.path.join(fn_dir, "pyproject.toml")
+
+        if os.path.exists(fn):
+            return fn
+
+        if fn_dir == os.sep:
+            raise KeyError("pyproject.toml not found")
+
+
+def parse_pyproject_toml():
+    cwd = os.getcwd()
+    buff_fn = vim.eval("expand('%')")
+    if (buff_fn is None) or (buff_fn == ""):
+        buff_fn = "__dummy__.py"
+    if os.path.isabs(buff_fn):
+        fn_path = buff_fn
+    else:
+        fn_path = os.path.join(cwd, buff_fn)
+
+    fn_path = str(Path(fn_path).resolve())
+
+    try:
+        pyproject_fn = find_pyproject_toml(fn_path)
+    except KeyError:
+        # file not found
+        set_val("b:vimruff_project_parsed", True)
+        return
+
+    try:
+        import tomllib
+    except ImportError:
+        try:
+            import tomli as tomllib
+        except ImportError:
+            set_val("b:vimruff_project_parsed", True)
+            print_error(f"Neither tomllib nor tomli are found. Unable to parse\n{pyproject_fn!r}", "WarningMsg")
+            return
+
+    try:
+        with open(pyproject_fn, "rb") as fp:
+            config = tomllib.load(fp)
+    except:
+        set_val("b:vimruff_project_parsed", True)
+        print_error(f"Error parsing {pyproject_fn!r}", "WarningMsg")
+        return
+
+    try:
+        base = config["tool"]["vimruff"]["config"]
+    except KeyError:
+        pass
+
+    possible_vars = ("default", "check-select")
+
+    for varname in possible_vars:
+        if varname in base:
+            varname_vim = varname.replace("-", "_")
+            set_val(f"b:vimruff_{varname_vim}", base[varname])
+
+    set_val("b:vimruff_project_parsed", True)
+
 def ruff(*args):
     try:
         bin_path = get_val("g:vimruff_ruff_path")
