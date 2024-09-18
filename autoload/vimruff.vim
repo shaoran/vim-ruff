@@ -42,7 +42,7 @@ def ruff_cmdline_complete(arg_lead, cmd_line, cursor_pos):
 
 
 def print_error(msg, hl="ErrorMsg"):
-    msg = shlex.quote(msg)
+    msg = repr(msg)
     vim.command(f"echohl {hl}")
     vim.command(f"echo {msg}")
     vim.command("echohl Null")
@@ -54,11 +54,7 @@ def get_val(name):
 
 def set_val(name, val):
     if isinstance(val, str):
-        vval = shlex.quote(val)
-        if val == vval:
-            val = f"'{val}'"
-        else:
-            val = vval
+        val = repr(val)
     elif isinstance(val, bool):
         if val == True:
             val = "v:true"
