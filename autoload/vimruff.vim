@@ -173,10 +173,64 @@ def ruff(range_enabled, line_spec, *args):
         except ValueError:
             parse_pyproject_toml()
 
+
     # if pyproject.toml has been parsed and contained
     # the variables, they have been set via b:<var>
 
-    print("This is ruff", args)
+
+    action = "default"
+
+    if args:
+        action = args[0]
+        args = args[1:]
+
+    commands = []
+
+    if action == "check":
+        commands.extend(ruff_check(bin_path, *args))
+    elif action == "format":
+        pass
+    elif action == "info":
+        pass
+    elif action == "clear":
+        pass
+    elif action == "default":
+        def_cmd = get_config_val("vimruff_default")
+        if def_cmd in ("check", "both"):
+            commands.extend(ruff_check(bin_path, *args))
+
+        if def_cmd in ("format", "both"):
+            pass
+
+        else:
+            print_error("Invalid default action {def_cmd!r}")
+            return
+    else:
+        print_error(f"Invalid command {action!r}")
+        return
+
+    print("This is ruff", args, range_enabled, commands)
+
+
+def ruff_check(bin_path, *args):
+    select = get_config_val("vimruff_check_select")
+    select_opt = ""
+    stdin_opt = "-"
+
+    # if the user passed --select in args, use those
+    # intead of the values from the config
+
+    if ("--select" not in args) and select:
+        # use the passed --select option from the user
+        select_opt = "--select " + shlex.quote(select)
+
+    if "-" in args:
+        stdin_opt = ""
+
+    cmd = f"{bin_path} check --fix {select_opt} {' '.join(args)} {stdin_opt}"
+
+    return [cmd]
+
 
 PYTHON3
 
