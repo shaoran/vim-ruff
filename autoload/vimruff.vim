@@ -224,12 +224,23 @@ def ruff(range_enabled, line_spec, *args):
         action = args[0]
         args = args[1:]
 
-    commands = []
+    current_buffer = vim.current.window.buffer
+
+    cursors = get_cursor_positions(current_buffer)
+    if range_enabled:
+        if firstline < 1:
+            firstline = 1
+        if lastline > len(current_buffer):
+            lastline = len(current_buffer)
+
+        content = "\n".join(current_buffer[firstline-1:lastline]) + "\n"
+    else:
+        content = "\n".join(current_buffer) + "\n"
 
     if action == "check":
-        commands.extend(ruff_check(bin_path, *args))
+        content = ruff_check(bin_path, content, *args)
     elif action == "format":
-        commands.extend(ruff_format(bin_path, *args))
+        content = ruff_format(bin_path, content, *args)
     elif action == "info":
         ruff_info(bin_path)
         return
@@ -239,12 +250,10 @@ def ruff(range_enabled, line_spec, *args):
     elif action == "default":
         def_cmd = get_config_val("vimruff_default")
         if def_cmd in ("check", "both"):
-            commands.extend(ruff_check(bin_path, *args))
+            content = ruff_check(bin_path, content, *args)
 
         if def_cmd in ("format", "both"):
-            commands.extend(ruff_format(bin_path, *args))
-            pass
-
+            content = ruff_format(bin_path, content, *args)
         else:
             print_error("Invalid default action {def_cmd!r}")
             return
@@ -252,10 +261,21 @@ def ruff(range_enabled, line_spec, *args):
         print_error(f"Invalid command {action!r}")
         return
 
-    print("This is ruff", args, range_enabled, commands)
+    content = content.split("\n")[:-1]
 
 
-def ruff_check(bin_path, *args):
+    if range_enabled:
+        buff_start = current_buffer[0:firstline-1]
+        buff_end = current_buffer[lastline:]
+        vim.current.buffer[:] = buff_start + content + buff_end
+    else:
+        vim.current.buffer[:] = content
+
+    restore_cursors(cursors)
+
+
+
+def ruff_check(bin_path, content, *args):
     select = get_config_val("vimruff_check_select")
     select_opt = ""
     stdin_opt = "-"
@@ -272,17 +292,31 @@ def ruff_check(bin_path, *args):
 
     cmd = f"{bin_path} check --fix {select_opt} {' '.join(args)} {stdin_opt}"
 
-    return [cmd]
+    _, out, _ = exec_command(cmd, content)
 
-def ruff_format(bin_path, *args):
+    # 'ruff check --fix -' on error returns the whole input
+    # via stdout
+
+    return out
+
+def ruff_format(bin_path, content, *args):
     stdin_opt = "-"
 
     if "-" in args:
         stdin_opt = ""
 
-    cmd = f"{bin_path} check format {' '.join(args)} {stdin_opt}"
+    cmd = f"{bin_path} format {' '.join(args)} {stdin_opt}"
 
-    return [cmd]
+    rc, out, err = exec_command(cmd, content)
+
+    # if the command returns with an error, 'ruff format' does not output
+    # the original content (like 'ruff check' does)
+    if rc == 0:
+        return out
+
+    print_error(f"The command {cmd!r} failed with return code {rc}")
+    # returnin the original content
+    return content
 
 def ruff_info(bin_path):
     print(r"Ruff binary path: {bin_path!r}")
