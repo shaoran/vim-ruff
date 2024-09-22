@@ -190,7 +190,7 @@ def ruff(range_enabled, line_spec, *args):
     if action == "check":
         commands.extend(ruff_check(bin_path, *args))
     elif action == "format":
-        pass
+        commands.extend(ruff_format(bin_path, *args))
     elif action == "info":
         pass
     elif action == "clear":
@@ -201,6 +201,7 @@ def ruff(range_enabled, line_spec, *args):
             commands.extend(ruff_check(bin_path, *args))
 
         if def_cmd in ("format", "both"):
+            commands.extend(ruff_format(bin_path, *args))
             pass
 
         else:
@@ -232,6 +233,15 @@ def ruff_check(bin_path, *args):
 
     return [cmd]
 
+def ruff_format(bin_path, *args):
+    stdin_opt = "-"
+
+    if "-" in args:
+        stdin_opt = ""
+
+    cmd = f"{bin_path} check format {' '.join(args)} {stdin_opt}"
+
+    return [cmd]
 
 PYTHON3
 
