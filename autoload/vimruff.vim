@@ -137,7 +137,8 @@ def parse_pyproject_toml():
     try:
         base = config["tool"]["vimruff"]["config"]
     except KeyError:
-        pass
+        set_val("b:vimruff_project_parsed", True)
+        return
 
     possible_vars = ("default", "check-select")
 
