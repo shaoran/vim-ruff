@@ -148,6 +148,25 @@ def parse_pyproject_toml():
 
     set_val("b:vimruff_project_parsed", True)
 
+def get_cursor_positions(current_buffer):
+    cursors = []
+    for i, tabpage in enumerate(vim.tabpages):
+        if tabpage.valid:
+            for j, window in enumerate(tabpage.windows):
+                if window.valid and window.buffer == current_buffer:
+                    cursors.append((i, j, window.cursor))
+
+    return cursors
+
+def restore_cursors(cursors):
+    for i, j, cursor in cursors:
+        window = vim.tabpages[i].windows[j]
+        try:
+            window.cursor = cursor
+        except vim.error:
+            window.cursor = (len(window.buffer), 0)
+
+
 def ruff(range_enabled, line_spec, *args):
     firstline, lastline = line_spec
     try:
