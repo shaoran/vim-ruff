@@ -192,7 +192,8 @@ def ruff(range_enabled, line_spec, *args):
     elif action == "format":
         commands.extend(ruff_format(bin_path, *args))
     elif action == "info":
-        pass
+        ruff_info(bin_path)
+        return
     elif action == "clear":
         pass
     elif action == "default":
@@ -242,6 +243,9 @@ def ruff_format(bin_path, *args):
     cmd = f"{bin_path} check format {' '.join(args)} {stdin_opt}"
 
     return [cmd]
+
+def ruff_info(bin_path):
+    print(r"Ruff binary path: {bin_path!r}")
 
 PYTHON3
 
