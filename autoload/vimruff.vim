@@ -29,7 +29,6 @@ def ruff_cmdline_complete(arg_lead, cmd_line, cursor_pos):
     # shlex.split takes care of multiple empty spaces, tabs and quotes
     opts = shlex.split(cmd_line)
     assert(len(opts) > 0)
-    assert(opts[0] == "Ruff")
 
     pos1_vals = RUFF_COMMANDS
 
