@@ -9,6 +9,7 @@ import shlex
 import shutil
 import sys
 import os
+import subprocess
 
 from pathlib import Path
 
@@ -165,6 +166,23 @@ def restore_cursors(cursors):
             window.cursor = cursor
         except vim.error:
             window.cursor = (len(window.buffer), 0)
+
+
+def exec_command(command: str, content: str):
+    content_s = content.encode("UTF-8")
+
+    cmd = subprocess.Popen(
+        shlex.split(command),
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    outs, errs = cmd.communicate(input=content_s)
+    out = outs.decode("UTF-8", errors="ignore")
+    err = errs.decode("UTF-8", errors="ignore")
+
+    return cmd.returncode, out, err
 
 
 def ruff(range_enabled, line_spec, *args):
