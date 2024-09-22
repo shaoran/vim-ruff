@@ -187,6 +187,9 @@ def exec_command(command: str, content: str):
 
 def ruff(range_enabled, line_spec, *args):
     firstline, lastline = line_spec
+    firstline = int(firstline)
+    lastline = int(lastline)
+
     try:
         bin_path = get_val("g:vimruff_ruff_path")
 
