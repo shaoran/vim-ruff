@@ -195,7 +195,8 @@ def ruff(range_enabled, line_spec, *args):
         ruff_info(bin_path)
         return
     elif action == "clear":
-        pass
+        ruff_clear()
+        return
     elif action == "default":
         def_cmd = get_config_val("vimruff_default")
         if def_cmd in ("check", "both"):
@@ -246,6 +247,11 @@ def ruff_format(bin_path, *args):
 
 def ruff_info(bin_path):
     print(r"Ruff binary path: {bin_path!r}")
+
+def ruff_clear():
+    vim.command("unlet b:vimruff_project_parsed")
+    vim.command("unlet b:vimruff_default")
+    vim.command("unlet b:vimruff_check_select")
 
 PYTHON3
 
