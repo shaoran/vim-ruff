@@ -140,7 +140,7 @@ def parse_pyproject_toml():
         set_val("b:vimruff_project_parsed", True)
         return
 
-    possible_vars = ("default", "check-select")
+    possible_vars = ("default", "check-select", "ruff-path")
 
     for varname in possible_vars:
         if varname in base:
