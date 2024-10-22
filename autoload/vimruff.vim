@@ -320,9 +320,9 @@ def ruff_info(bin_path):
     print("\n".join(lines))
 
 def ruff_clear():
-    vim.command("unlet b:vimruff_project_parsed")
-    vim.command("unlet b:vimruff_default")
-    vim.command("unlet b:vimruff_check_select")
+    vim.command("unlet! b:vimruff_project_parsed")
+    vim.command("unlet! b:vimruff_default")
+    vim.command("unlet! b:vimruff_check_select")
 
 PYTHON3
 
