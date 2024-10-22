@@ -308,7 +308,16 @@ def ruff_format(bin_path, content, *args):
     return content
 
 def ruff_info(bin_path):
-    print(r"Ruff binary path: {bin_path!r}")
+    lines = []
+    lines.append(f"Ruff binary path: {bin_path!r}")
+    lines.append(" \nVariables")
+    lines.append("=========\n \n")
+    lines.append(f"vimruff_default:             {get_config_val('vimruff_default')!r}")
+    lines.append(f"vimruff_check_select:        {get_config_val('vimruff_check_select')!r}")
+    lines.append(f"vimruff_eval_pyproject_toml: {get_config_val('vimruff_eval_pyproject_toml')!r}")
+    lines.append(f"vimruff_project_parsed:      {get_config_val('vimruff_project_parsed')!r}")
+
+    print("\n".join(lines))
 
 def ruff_clear():
     vim.command("unlet b:vimruff_project_parsed")
