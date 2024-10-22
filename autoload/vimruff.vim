@@ -323,6 +323,7 @@ def ruff_clear():
     vim.command("unlet! b:vimruff_project_parsed")
     vim.command("unlet! b:vimruff_default")
     vim.command("unlet! b:vimruff_check_select")
+    print("Clear finished. Next time you execute a vim-ruff command, pyproject.toml will be parsed again")
 
 PYTHON3
 
