@@ -33,5 +33,4 @@ function RuffComplete(ArgLead, CmdLine, CursorPos)
     return call vimruff#RuffComplete(a:ArgLead, a:CmdLine, a:CursorPos)
 endfunction
 
-command! -nargs=* -complete=customlist,vimruff#RuffComplete Ruff call vimruff#Ruf(v:false, <f-args>)
-command! -range -nargs=* -complete=customlist,vimruff#RuffComplete RRuff <line1>,<line2>call vimruff#Ruf(v:true, <f-args>)
+command! -nargs=* -complete=customlist,vimruff#RuffComplete Ruff call vimruff#Ruf(<f-args>)

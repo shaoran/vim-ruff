@@ -185,11 +185,7 @@ def exec_command(command: str, content: str):
     return cmd.returncode, out, err
 
 
-def ruff(range_enabled, line_spec, *args):
-    firstline, lastline = line_spec
-    firstline = int(firstline)
-    lastline = int(lastline)
-
+def ruff(*args):
     try:
         bin_path = get_val("g:vimruff_ruff_path")
 
@@ -227,15 +223,9 @@ def ruff(range_enabled, line_spec, *args):
     current_buffer = vim.current.window.buffer
 
     cursors = get_cursor_positions(current_buffer)
-    if range_enabled:
-        if firstline < 1:
-            firstline = 1
-        if lastline > len(current_buffer):
-            lastline = len(current_buffer)
+    content = "\n".join(current_buffer) + "\n"
 
-        content = "\n".join(current_buffer[firstline-1:lastline]) + "\n"
-    else:
-        content = "\n".join(current_buffer) + "\n"
+    original_content = content
 
     if action == "check":
         content = ruff_check(bin_path, content, *args)
@@ -261,15 +251,14 @@ def ruff(range_enabled, line_spec, *args):
         print_error(f"Invalid command {action!r}")
         return
 
+    if original_content == content:
+        print("Already formatted")
+        return
+
     content = content.split("\n")[:-1]
 
 
-    if range_enabled:
-        buff_start = current_buffer[0:firstline-1]
-        buff_end = current_buffer[lastline:]
-        vim.current.buffer[:] = buff_start + content + buff_end
-    else:
-        vim.current.buffer[:] = content
+    vim.current.buffer[:] = content
 
     restore_cursors(cursors)
 
@@ -329,8 +318,8 @@ def ruff_clear():
 PYTHON3
 
 
-function vimruff#Ruf(range, ...) range
-    :py3 ruff(vim.eval("a:range"), (vim.eval("a:firstline"), vim.eval("a:lastline")), *vim.eval("a:000"))
+function vimruff#Ruf(...)
+    :py3 ruff(*vim.eval("a:000"))
 endfunction
 
 
