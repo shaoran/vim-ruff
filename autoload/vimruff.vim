@@ -252,8 +252,10 @@ def ruff(*args):
         return
 
     if original_content == content:
-        print("Already formatted")
+        print("vim-ruf: Already formatted")
         return
+    else:
+        print("vim-ruff: Formatting finished")
 
     content = content.split("\n")[:-1]
 
